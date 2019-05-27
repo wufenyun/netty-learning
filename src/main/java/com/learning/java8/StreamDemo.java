@@ -16,18 +16,48 @@ public class StreamDemo {
     
     @Before
     public void init() {
-        CategorySite s1 = new CategorySite();
+       /* CategorySite s1 = new CategorySite();
         s1.setSite(1);
         s1.setName("zbj");
         CategorySite s2 = new CategorySite();
         s2.setSite(2);
-        s2.setName("tpw");
+        s2.setName("tpw");*/
         
         list = new ArrayList<>();
-        list.add(s1);
-        list.add(s2);
+        for (int i=0;i<100000;i++) {
+            CategorySite s1 = new CategorySite();
+            s1.setSite(i);
+            s1.setName("zbj"+i);
+            list.add(s1);
+        }
     }
-    
+
+    @Test
+    public void parallel() {
+        long start = System.currentTimeMillis();
+        List<CategorySite> result = list.parallelStream().filter(v->{
+            return v.getSite()==90000?true:false;
+        }).collect(Collectors.toList());
+        long end = System.currentTimeMillis();
+
+        System.out.println(JSON.toJSONString(result));
+        System.out.println("parallelstream用时:" + (end-start));
+    }
+
+    @Test
+    public void parallel2() {
+        long start = System.currentTimeMillis();
+        List<CategorySite> result = list.stream().filter(v->{
+            return v.getSite()==90000?true:false;
+        }).collect(Collectors.toList());
+        long end = System.currentTimeMillis();
+
+        System.out.println(JSON.toJSONString(result));
+        System.out.println("stream:" + (end-start));
+    }
+
+
+
     @Test
     public void lamda() {
         Runnable r1 = ()->{System.out.println("sss");try {

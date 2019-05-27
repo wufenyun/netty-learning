@@ -60,4 +60,58 @@ public class DateDemo {
     public void print(Object obj) {
         System.out.println(obj);
     }
+
+    @Test
+    public void time() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(localDateTime.toString());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println(localDateTime.format(df));
+
+        LocalTime localTime = LocalTime.now();
+        System.out.println(localTime.toString());
+    }
+
+    @Test
+    public void jiaotiPrint() throws InterruptedException {
+        Object object = new Object();
+        boolean flag = true;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (object) {
+                        try {
+                            object.wait();
+                            System.out.println("aaa");
+                            object.notify();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        },"ta").start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (object) {
+                        try {
+                            System.out.println("bbb");
+                            object.notify();
+                            object.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        },"tb").start();
+
+        Thread.sleep(1000000);
+    }
+
 }
